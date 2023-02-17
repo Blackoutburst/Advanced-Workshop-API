@@ -60,7 +60,7 @@ public class Main extends JavaPlugin {
                 return "Not found";
             }
 
-            return JSONUtils.generatePlayerJSON(file, uuid);
+            return JSONUtils.generatePlayerJSON(file);
         });
 
     }
