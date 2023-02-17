@@ -43,7 +43,7 @@ public class JSONUtils {
                 "}";
     }
 
-    public static String generatePlayerJSON(final File file, final String uuid) {
+    public static String generatePlayerJSON(File file) {
         final YamlConfiguration playerData = YamlConfiguration.loadConfiguration(file);
         String name = playerData.getString("name", "unknown");
         int gameCount = playerData.getInt("gameCount", 0);
