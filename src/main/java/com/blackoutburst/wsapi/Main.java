@@ -1,7 +1,5 @@
-package com.blackoutburst.hitwapi;
+package com.blackoutburst.wsapi;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import spark.Spark;
@@ -28,25 +26,80 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Spark.port(30100);
+        Spark.port(31740);
+
+        Spark.get("/users", (req, res) -> {
+            final String token = req.queryParams("token");
+
+            if (token == null || !token.equals(TOKEN)) {
+                res.status(401);
+                return "Invalid token";
+            }
+
+            return generatePlayerListJSON();
+        });
+
         Spark.get("/user", (req, res) -> {
             final String uuid = req.queryParams("uuid");
+            final String token = req.queryParams("token");
+
+            if (token == null || !token.equals(TOKEN)) {
+                res.status(401);
+                return "Invalid token";
+            }
+
             if (uuid == null) {
                 res.status(400);
                 return "Missing parameter 'uuid'";
             }
 
-            final File file = new File("./plugins/HitW/player data/"+uuid+".yml");
+            final File file = new File("./plugins/Workshop/playerData/"+uuid+".yml");
             if (!file.exists()) {
                 return "null";
             }
 
-            return generateAssJson(file, uuid);
+            return generatePlayerJSON(file, uuid);
         });
 
     }
 
-    private String generateAssJson(final File file, final String uuid) {
+    private String generatePlayerListJSON() {
+
+        StringBuilder players = new StringBuilder();
+
+        File folder = new File("./plugins/Workshop/playerData");
+        File[] files = folder.listFiles();
+        if (files == null) return "{}";
+
+        for (int i = 0; i < files.length; i++) {
+            if (!files[i].isFile()) continue;
+
+            String[] fileName = files[i].getName().split("\\.");
+
+            if (fileName.length == 1) continue;
+            if (!fileName[1].equals("yml")) continue;
+
+            String uuid = fileName[0];
+            YamlConfiguration playerData = YamlConfiguration.loadConfiguration(files[i].getAbsoluteFile());
+            String name = playerData.getString("name");
+
+            players.append("{")
+                    .append("\"uuid\": \"").append(uuid).append("\",")
+                    .append("\"name\": \"").append(name).append("\"")
+                    .append("}");
+            if (i != files.length -1) {
+                players.append(",");
+            }
+        }
+
+        return "{" +
+            "\"players\": [" +
+                players +
+            "]" +
+        "}";
+    }
+
+    private String generatePlayerJSON(final File file, final String uuid) {
         final YamlConfiguration playerData = YamlConfiguration.loadConfiguration(file);
         final int Q = playerData.getInt("score.Q", 0);
         final int F = playerData.getInt("score.F", 0);

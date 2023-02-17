@@ -1,6 +1,6 @@
-main: com.blackoutburst.hitwapi.Main
-name: HitWApi
+main: com.blackoutburst.wsapi.Main
+name: WSApi
 version: 1.0
 api-version: 1.13
 author: Blackoutburst
-description: Hole in the Wall Api plugin
+description: Workshop Api plugin
