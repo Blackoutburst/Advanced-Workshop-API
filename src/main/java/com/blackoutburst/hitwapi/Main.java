@@ -3,7 +3,6 @@ package com.blackoutburst.hitwapi;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import spark.Spark;
 
@@ -19,7 +18,7 @@ public class Main extends JavaPlugin {
     private static String readEnv() {
         try {
             List<String> lines = Files.readAllLines(Paths.get(".env"));
-            return lines.get(0).split("=")[1].replace("\"", "");
+            return lines.get(1).split("=")[1].replace("\"", "");
         } catch (Exception e) {
             System.err.println("Invalid .env file");
             System.exit(0);
@@ -45,88 +44,6 @@ public class Main extends JavaPlugin {
             return generateAssJson(file, uuid);
         });
 
-
-        Spark.get("/whitelistadd", (req, res) -> {
-            final String token = req.queryParams("token");
-            final String name = req.queryParams("name");
-
-            if (token == null || !token.equals(TOKEN)) {
-                res.status(401);
-                return "Inavlid token";
-            }
-
-            if (name == null) {
-                res.status(400);
-                return "Missing parameter 'name'";
-            }
-
-            OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-
-            if (player == null) {
-                res.status(400);
-                return "Unknown player";
-            }
-
-            player.setWhitelisted(true);
-            Bukkit.getServer().reloadWhitelist();
-
-            return "Player added to the whitelist";
-        });
-
-        Spark.get("/whitelistremove", (req, res) -> {
-            final String token = req.queryParams("token");
-            final String name = req.queryParams("name");
-
-            if (token == null || !token.equals(TOKEN)) {
-                res.status(401);
-                return "Inavlid token";
-            }
-
-            if (name == null) {
-                res.status(400);
-                return "Missing parameter 'name'";
-            }
-
-            OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-
-            if (player == null) {
-                res.status(400);
-                return "Unknown player";
-            }
-
-            player.setWhitelisted(false);
-            Bukkit.getServer().reloadWhitelist();
-
-            return "Player removed from the whitelist";
-        });
-
-        Spark.get("/whitelistenable", (req, res) -> {
-            final String token = req.queryParams("token");
-
-            if (token == null || !token.equals(TOKEN)) {
-                res.status(401);
-                return "Inavlid token";
-            }
-
-            Bukkit.getServer().setWhitelist(true);
-            Bukkit.getServer().reloadWhitelist();
-
-            return "Server whitelist enabled";
-        });
-
-        Spark.get("/whitelistdisable", (req, res) -> {
-            final String token = req.queryParams("token");
-
-            if (token == null || !token.equals(TOKEN)) {
-                res.status(401);
-                return "Inavlid token";
-            }
-
-            Bukkit.getServer().setWhitelist(false);
-            Bukkit.getServer().reloadWhitelist();
-
-            return "Server whitelist disabled";
-        });
     }
 
     private String generateAssJson(final File file, final String uuid) {
