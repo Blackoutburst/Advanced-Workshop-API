@@ -51,8 +51,8 @@ public class JSONUtils {
 
         return "{" +
                 "\"leaderboards\": [" +
-                leaderboards +
-                "]" +
+                        leaderboards +
+                    "]" +
                 "}";
     }
 
@@ -86,6 +86,43 @@ public class JSONUtils {
 
         return "{" +
                     "\"players\": [" +
+                        players +
+                    "]" +
+                "}";
+    }
+
+    public static String generateLeaderboard(String type) {
+        StringBuilder players = new StringBuilder();
+
+        File folder = new File("./plugins/Workshop/playerData");
+        File[] files = folder.listFiles();
+        if (files == null) return "{}";
+
+        for (int i = 0; i < files.length; i++) {
+            if (!files[i].isFile()) continue;
+
+            String[] fileName = files[i].getName().split("\\.");
+
+            if (fileName.length == 1) continue;
+            if (!fileName[1].equals("yml")) continue;
+
+            String uuid = fileName[0];
+            YamlConfiguration playerData = YamlConfiguration.loadConfiguration(files[i].getAbsoluteFile());
+            String name = playerData.getString("name");
+            double value = playerData.getDouble(type);
+
+            players.append("{")
+                    .append("\"uuid\": \"").append(uuid).append("\",")
+                    .append("\"name\": \"").append(name).append("\",")
+                    .append("\"value\": \"").append(value).append("\"")
+                    .append("}");
+            if (i != files.length -1) {
+                players.append(",");
+            }
+        }
+
+        return "{" +
+                "\"players\": [" +
                         players +
                     "]" +
                 "}";

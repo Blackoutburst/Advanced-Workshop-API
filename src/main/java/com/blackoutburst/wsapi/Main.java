@@ -38,17 +38,6 @@ public class Main extends JavaPlugin {
             return JSONUtils.generatePlayerListJSON();
         });
 
-        Spark.get("/leaderboards", (req, res) -> {
-            final String token = req.queryParams("token");
-
-            if (token == null || !token.equals(TOKEN)) {
-                res.status(401);
-                return "Invalid token";
-            }
-
-            return JSONUtils.generateLeaderboardsList();
-        });
-
         Spark.get("/user", (req, res) -> {
             final String uuid = req.queryParams("uuid");
             final String token = req.queryParams("token");
@@ -72,5 +61,32 @@ public class Main extends JavaPlugin {
             return JSONUtils.generatePlayerJSON(file);
         });
 
+        Spark.get("/leaderboards", (req, res) -> {
+            final String token = req.queryParams("token");
+
+            if (token == null || !token.equals(TOKEN)) {
+                res.status(401);
+                return "Invalid token";
+            }
+
+            return JSONUtils.generateLeaderboardsList();
+        });
+
+        Spark.get("/leaderboard", (req, res) -> {
+            final String token = req.queryParams("token");
+            final String type = req.queryParams("type");
+
+            if (token == null || !token.equals(TOKEN)) {
+                res.status(401);
+                return "Invalid token";
+            }
+
+            if (type == null) {
+                res.status(400);
+                return "Bad request";
+            }
+
+            return JSONUtils.generateLeaderboard(type);
+        });
     }
 }
