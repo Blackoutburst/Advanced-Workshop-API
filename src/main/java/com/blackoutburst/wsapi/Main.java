@@ -38,6 +38,17 @@ public class Main extends JavaPlugin {
             return JSONUtils.generatePlayerListJSON();
         });
 
+        Spark.get("/leaderboards", (req, res) -> {
+            final String token = req.queryParams("token");
+
+            if (token == null || !token.equals(TOKEN)) {
+                res.status(401);
+                return "Invalid token";
+            }
+
+            return JSONUtils.generateLeaderboardsList();
+        });
+
         Spark.get("/user", (req, res) -> {
             final String uuid = req.queryParams("uuid");
             final String token = req.queryParams("token");

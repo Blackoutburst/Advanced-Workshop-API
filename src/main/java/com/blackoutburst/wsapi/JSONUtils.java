@@ -4,10 +4,57 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JSONUtils {
+
+    public static String generateLeaderboardsList() {
+        StringBuilder leaderboards = new StringBuilder();
+
+        File folder = new File("./plugins/Workshop/");
+        File[] files = folder.listFiles();
+        if (files == null) return "{}";
+
+        for (int i = 0; i < files.length; i++) {
+            if (!files[i].isFile()) continue;
+
+            String[] fileName = files[i].getName().split("\\.");
+
+            if (fileName.length == 1) continue;
+            if (!fileName[1].equals("craft")) continue;
+
+            String map = fileName[0];
+
+            leaderboards.append("\"").append(map).append(".gameCount").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".roundCount").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".time").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".1mCrafts").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".90sCrafts").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".2mCrafts").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".5mCrafts").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".timeAll").append("\"").append(",");
+
+            try {
+                List<String> crafts = Files.readAllLines(Paths.get("./plugins/Workshop/" + map + ".craft"));
+
+                for (int j = 0; j < crafts.size(); j++) {
+                    String craft = crafts.get(j).split(", ")[0];
+                    leaderboards.append("\"").append(map).append(".crafts.").append(craft).append("\"").append(",");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return "{" +
+                "\"leaderboards\": [" +
+                leaderboards +
+                "]" +
+                "}";
+    }
 
     public static String generatePlayerListJSON() {
         StringBuilder players = new StringBuilder();
