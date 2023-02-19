@@ -1,8 +1,6 @@
 package com.blackoutburst.wsapi;
 
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.eclipse.jetty.util.ajax.JSON;
 import spark.Spark;
 
 import java.io.File;

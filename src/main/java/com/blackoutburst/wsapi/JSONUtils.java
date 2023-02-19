@@ -1,5 +1,6 @@
 package com.blackoutburst.wsapi;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -78,6 +79,36 @@ public class JSONUtils {
             mapTime.add("\"time\": " + value);
         }
 
+        List<String> m1Crafts = new ArrayList<>();
+        for (String map : maps) {
+            int value = playerData.getInt(map + ".1mCrafts", 0);
+            m1Crafts.add("\"m1crafts\": " + value);
+        }
+
+        List<String> s90Crafts = new ArrayList<>();
+        for (String map : maps) {
+            int value = playerData.getInt(map + ".90sCrafts", 0);
+            s90Crafts.add("\"s90crafts\": " + value);
+        }
+
+        List<String> m2Crafts = new ArrayList<>();
+        for (String map : maps) {
+            int value = playerData.getInt(map + ".2mCrafts", 0);
+            m2Crafts.add("\"m2crafts\": " + value);
+        }
+
+        List<String> m5Crafts = new ArrayList<>();
+        for (String map : maps) {
+            int value = playerData.getInt(map + ".5mCrafts", 0);
+            m5Crafts.add("\"m5crafts\": " + value);
+        }
+
+        List<String> TimeAll = new ArrayList<>();
+        for (String map : maps) {
+            double value = playerData.getDouble(map + ".timeAll", 0);
+            TimeAll.add("\"allCrafts\": " + value);
+        }
+
         StringBuilder mapData = new StringBuilder();
 
         for (int i = 0; i < maps.size(); i++) {
@@ -86,31 +117,46 @@ public class JSONUtils {
             String mt = mapTime.get(i);
             String mn = maps.get(i);
 
+            String m1 = m1Crafts.get(i);
+            String s90 = s90Crafts.get(i);
+            String m2 = m2Crafts.get(i);
+            String m5 = m5Crafts.get(i);
+            String ta = TimeAll.get(i);
+
+            ConfigurationSection craftSection = playerData.getConfigurationSection(mn+".crafts");
             StringBuilder craftData = new StringBuilder();
+            if (craftSection != null) {
+                List<String> crafts = new ArrayList<>(craftSection.getKeys(false));
 
-            List<String> crafts = new ArrayList<>(playerData.getConfigurationSection(mn+".crafts").getKeys(false));
+                craftData.append("\"crafts\": [");
 
-            craftData.append("\"crafts\": [");
+                for (int j = 0; j < crafts.size(); j++) {
+                    String craft = crafts.get(j);
+                    double time = playerData.getDouble(mn+".crafts."+craft);
+                    craftData.append("{")
+                            .append("\"name\": \"").append(craft).append("\",")
+                            .append("\"time\": ").append(time)
+                            .append("}");
 
-            for (int j = 0; j < crafts.size(); j++) {
-                String craft = crafts.get(j);
-                double time = playerData.getDouble(mn+".crafts."+craft);
-                craftData.append("{")
-                        .append("\"name\": \"").append(craft).append("\",")
-                        .append("\"time\": ").append(time)
-                        .append("}");
-
-                if (j != crafts.size() -1) {
-                    craftData.append(",");
+                    if (j != crafts.size() -1) {
+                        craftData.append(",");
+                    }
                 }
+                craftData.append("]");
+            } else {
+                craftData.append("\"crafts\": []");
             }
-            craftData.append("]");
 
             mapData.append("{")
                     .append("\"name\": \"").append(mn).append("\",")
                     .append(mgc).append(",")
                     .append(mrc).append(",")
                     .append(mt).append(",")
+                    .append(m1).append(",")
+                    .append(s90).append(",")
+                    .append(m2).append(",")
+                    .append(m5).append(",")
+                    .append(ta).append(",")
                     .append(craftData)
                     .append("}");
 
