@@ -7,6 +7,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class JSONUtils {
@@ -15,16 +16,41 @@ public class JSONUtils {
         StringBuilder leaderboards = new StringBuilder();
 
         File folder = new File("./plugins/Workshop/");
-        File[] files = folder.listFiles();
-        if (files == null) return "{}";
+        File[] tmp = folder.listFiles();
+        if (tmp == null) return "{}";
+        List<File> files = new ArrayList<>(Arrays.asList(tmp));
 
-        for (int i = 0; i < files.length; i++) {
-            if (!files[i].isFile()) continue;
+        try {
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.get(i);
 
-            String[] fileName = files[i].getName().split("\\.");
+                if (file.isDirectory()) {
+                    i--;
+                    files.remove(file);
+                    continue;
+                }
 
-            if (fileName.length == 1) continue;
-            if (!fileName[1].equals("craft")) continue;
+                String[] fileName = file.getName().split("\\.");
+
+                if (fileName.length != 2) {
+                    i--;
+                    files.remove(file);
+                    continue;
+                }
+                if (!fileName[1].equals("craft")) {
+                    i--;
+                    files.remove(file);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        leaderboards.append("\"").append("gameCount").append("\"").append(",");
+        leaderboards.append("\"").append("roundCount").append("\"").append(",");
+
+        for (int i = 0; i < files.size(); i++) {
+            String[] fileName = files.get(i).getName().split("\\.");
 
             String map = fileName[0];
 
@@ -42,7 +68,9 @@ public class JSONUtils {
 
                 for (int j = 0; j < crafts.size(); j++) {
                     String craft = crafts.get(j).split(", ")[0];
-                    leaderboards.append("\"").append(map).append(".crafts.").append(craft).append("\"").append(",");
+                    leaderboards.append("\"").append(map).append(".crafts.").append(craft).append("\"");
+                    if (i != files.size() -1 || j != crafts.size() -1)
+                        leaderboards.append(",");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -109,13 +137,20 @@ public class JSONUtils {
             String uuid = fileName[0];
             YamlConfiguration playerData = YamlConfiguration.loadConfiguration(files[i].getAbsoluteFile());
             String name = playerData.getString("name");
-            double value = playerData.getDouble(type);
 
             players.append("{")
                     .append("\"uuid\": \"").append(uuid).append("\",")
-                    .append("\"name\": \"").append(name).append("\",")
-                    .append("\"value\": \"").append(value).append("\"")
-                    .append("}");
+                    .append("\"name\": \"").append(name).append("\",");
+
+            if (type.contains("gameCount") || type.contains("roundCount") || type.contains("1mCrafts") || type.contains("90sCrafts") || type.contains("2mCrafts") || type.contains("5mCrafts")) {
+                int value = playerData.getInt(type);
+                players.append("\"value\": ").append(value);
+            } else {
+                double value = playerData.getDouble(type);
+                players.append("\"value\": \"").append(value).append("\"");
+            }
+
+            players.append("}");
             if (i != files.length -1) {
                 players.append(",");
             }
