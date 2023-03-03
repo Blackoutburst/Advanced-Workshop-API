@@ -1,11 +1,10 @@
 package com.blackoutburst.wsapi;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,44 +14,17 @@ public class JSONUtils {
     public static String generateLeaderboardsList() {
         StringBuilder leaderboards = new StringBuilder();
 
-        File folder = new File("./plugins/Workshop/");
+        File folder = new File("./plugins/Workshop/maps");
         File[] tmp = folder.listFiles();
         if (tmp == null) return "{}";
         List<File> files = new ArrayList<>(Arrays.asList(tmp));
 
-        try {
-            for (int i = 0; i < files.size(); i++) {
-                File file = files.get(i);
-
-                if (file.isDirectory()) {
-                    i--;
-                    files.remove(file);
-                    continue;
-                }
-
-                String[] fileName = file.getName().split("\\.");
-
-                if (fileName.length != 2) {
-                    i--;
-                    files.remove(file);
-                    continue;
-                }
-                if (!fileName[1].equals("craft")) {
-                    i--;
-                    files.remove(file);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         leaderboards.append("\"").append("gameCount").append("\"").append(",");
         leaderboards.append("\"").append("roundCount").append("\"").append(",");
 
         for (int i = 0; i < files.size(); i++) {
-            String[] fileName = files.get(i).getName().split("\\.");
-
-            String map = fileName[0];
+            String map = files.get(i).getName();
 
             leaderboards.append("\"").append(map).append(".gameCount").append("\"").append(",");
             leaderboards.append("\"").append(map).append(".roundCount").append("\"").append(",");
@@ -64,10 +36,12 @@ public class JSONUtils {
             leaderboards.append("\"").append(map).append(".timeAll").append("\"").append(",");
 
             try {
-                List<String> crafts = Files.readAllLines(Paths.get("./plugins/Workshop/" + map + ".craft"));
+                YamlConfiguration ymlFile = YamlConfiguration.loadConfiguration(new File("./plugins/Workshop/maps/" + map + "/craft.yml"));
+                List<String> crafts = new ArrayList<>(ymlFile.getKeys(false));
 
                 for (int j = 0; j < crafts.size(); j++) {
-                    String craft = crafts.get(j).split(", ")[0];
+                    String craft = MiscUtils.getItemName(Material.valueOf(crafts.get(j)));
+
                     leaderboards.append("\"").append(map).append(".crafts.").append(craft).append("\"");
                     if (i != files.size() -1 || j != crafts.size() -1)
                         leaderboards.append(",");

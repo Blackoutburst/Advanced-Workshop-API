@@ -25,7 +25,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Spark.port(31740);
+        Spark.port(18499);
 
         Spark.get("/users", (req, res) -> {
             final String token = req.queryParams("token");

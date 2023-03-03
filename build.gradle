@@ -4,11 +4,12 @@ plugins {
 }
 
 group 'com.blackoutburst'
-version '1.1'
+version '1.2'
 
 compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = '16'
+    targetCompatibility = '16'
+    options.encoding = "UTF-8"
 }
 
 repositories {
@@ -44,4 +45,5 @@ dependencies {
     implementation 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     implementation 'org.slf4j:slf4j-simple:2.0.0'
     implementation "com.sparkjava:spark-core:2.9.4"
+    implementation files('lib/item-nbt-api-plugin-2.11.1.jar')
 }
