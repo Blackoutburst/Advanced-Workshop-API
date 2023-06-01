@@ -35,6 +35,11 @@ public class JSONUtils {
             leaderboards.append("\"").append(map).append(".5mCrafts").append("\"").append(",");
             leaderboards.append("\"").append(map).append(".timeAll").append("\"").append(",");
 
+            leaderboards.append("\"").append(map).append(".HStime").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".HStimeAll").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".time10").append("\"").append(",");
+            leaderboards.append("\"").append(map).append(".time15").append("\"").append(",");
+
             try {
                 YamlConfiguration ymlFile = YamlConfiguration.loadConfiguration(new File("./plugins/Workshop/maps/" + map + "/craft.yml"));
                 List<String> crafts = new ArrayList<>(ymlFile.getKeys(false));
@@ -202,6 +207,30 @@ public class JSONUtils {
             TimeAll.add("\"allCrafts\": " + value);
         }
 
+        List<String> HStime = new ArrayList<>();
+        for (String map : maps) {
+            double value = playerData.getDouble(map + ".HStime", 0);
+            HStime.add("\"HStime\": " + value);
+        }
+
+        List<String> HStimeAll = new ArrayList<>();
+        for (String map : maps) {
+            double value = playerData.getDouble(map + ".HStimeAll", 0);
+            HStimeAll.add("\"HStimeAll\": " + value);
+        }
+
+        List<String> time10 = new ArrayList<>();
+        for (String map : maps) {
+            double value = playerData.getDouble(map + ".time10", 0);
+            time10.add("\"time10\": " + value);
+        }
+
+        List<String> time15 = new ArrayList<>();
+        for (String map : maps) {
+            double value = playerData.getDouble(map + ".time15", 0);
+            time15.add("\"time15\": " + value);
+        }
+
         StringBuilder mapData = new StringBuilder();
 
         for (int i = 0; i < maps.size(); i++) {
@@ -215,6 +244,11 @@ public class JSONUtils {
             String m2 = m2Crafts.get(i);
             String m5 = m5Crafts.get(i);
             String ta = TimeAll.get(i);
+
+            String hs = TimeAll.get(i);
+            String hsta = TimeAll.get(i);
+            String t10 = TimeAll.get(i);
+            String t15 = TimeAll.get(i);
 
             ConfigurationSection craftSection = playerData.getConfigurationSection(mn+".crafts");
             StringBuilder craftData = new StringBuilder();
@@ -250,6 +284,10 @@ public class JSONUtils {
                     .append(m2).append(",")
                     .append(m5).append(",")
                     .append(ta).append(",")
+                    .append(hs).append(",")
+                    .append(hsta).append(",")
+                    .append(t10).append(",")
+                    .append(t15).append(",")
                     .append(craftData)
                     .append("}");
 
