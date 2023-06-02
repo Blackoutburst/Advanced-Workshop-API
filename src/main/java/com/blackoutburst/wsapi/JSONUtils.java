@@ -34,7 +34,6 @@ public class JSONUtils {
             leaderboards.append("\"").append(map).append(".2mCrafts").append("\"").append(",");
             leaderboards.append("\"").append(map).append(".5mCrafts").append("\"").append(",");
             leaderboards.append("\"").append(map).append(".timeAll").append("\"").append(",");
-
             leaderboards.append("\"").append(map).append(".HStime").append("\"").append(",");
             leaderboards.append("\"").append(map).append(".HStimeAll").append("\"").append(",");
             leaderboards.append("\"").append(map).append(".time10").append("\"").append(",");
@@ -245,10 +244,10 @@ public class JSONUtils {
             String m5 = m5Crafts.get(i);
             String ta = TimeAll.get(i);
 
-            String hs = TimeAll.get(i);
-            String hsta = TimeAll.get(i);
-            String t10 = TimeAll.get(i);
-            String t15 = TimeAll.get(i);
+            String hs = HStime.get(i);
+            String hsta = HStimeAll.get(i);
+            String t10 = time10.get(i);
+            String t15 = time15.get(i);
 
             ConfigurationSection craftSection = playerData.getConfigurationSection(mn+".crafts");
             StringBuilder craftData = new StringBuilder();
